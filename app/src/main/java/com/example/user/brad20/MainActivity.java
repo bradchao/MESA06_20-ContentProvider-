@@ -1,6 +1,8 @@
 package com.example.user.brad20;
 
 import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -13,6 +15,7 @@ import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
     private TelephonyManager tmgr;
+    private AccountManager amgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,10 +23,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_PHONE_STATE)
+                Manifest.permission.GET_ACCOUNTS)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_PHONE_STATE},
+                    new String[]{Manifest.permission.READ_PHONE_STATE,
+                            Manifest.permission.GET_ACCOUNTS},
                     123);
         }else{
             init();
@@ -36,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
         Log.v("brad", "ｓｉｍ" +tmgr.getSubscriberId());
 
         tmgr.listen(new MyPhoneStateListener(), PhoneStateListener.LISTEN_CALL_STATE);
+
+        amgr = (AccountManager)getSystemService(ACCOUNT_SERVICE);
+        Account[] as = amgr.getAccounts();
+        for (Account a: as){
+            Log.v("brad", a.name + ":" +a.type );
+        }
 
 
     }
