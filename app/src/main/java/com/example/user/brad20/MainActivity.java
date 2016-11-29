@@ -6,6 +6,8 @@ import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -16,16 +18,20 @@ import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
     private TelephonyManager tmgr;
     private AccountManager amgr;
     private ContentResolver contentResolver;
+    private ImageView img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        img = (ImageView)findViewById(R.id.img);
 
         contentResolver = getContentResolver();
         if (ContextCompat.checkSelfPermission(this,
@@ -85,9 +91,14 @@ public class MainActivity extends AppCompatActivity {
     private void getPhoto(){
         Cursor c = contentResolver.query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
-        Log.v("brad", "photo: " + c.getCount());
+        //Log.v("brad", "photo: " + c.getCount());
 
+        c.moveToLast();
+        String data = c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
+        Log.v("brad", "photo: " + data);
 
+        Bitmap photo = BitmapFactory.decodeFile(data);
+        img.setImageBitmap(photo);
 
     }
 
